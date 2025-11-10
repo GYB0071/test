@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>多人同步游戏</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+  <h1>多人同步游戏示例</h1>
+  <button id="moveBtn">移动玩家</button>
+
+  <script>
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+      console.log("已连接服务器，ID:", socket.id);
+    });
+
+    // 模拟玩家操作，点击按钮发送动作
+    document.getElementById("moveBtn").addEventListener("click", () => {
+      const action = {
+        playerId: socket.id,
+        x: Math.floor(Math.random() * 500),
+        y: Math.floor(Math.random() * 500),
+      };
+      console.log("发送动作:", action);
+      socket.emit("playerAction", action);
+    });
+
+    // 接收其他玩家动作
+    socket.on("updateState", (data) => {
+      console.log("收到其他玩家动作:", data);
+      // 这里你可以根据data更新游戏画面
+    });
+  </script>
+</body>
+</html>
